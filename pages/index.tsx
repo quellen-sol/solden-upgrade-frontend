@@ -2,8 +2,6 @@ import type { NextPage } from "next";
 import Head from "next/head";
 
 const Home: NextPage = () => {
-  const thing = 2;
-  console.log(thing);
   return (
     <Head>
       <title>Create Next App</title>
