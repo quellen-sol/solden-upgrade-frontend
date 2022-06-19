@@ -1,12 +1,16 @@
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import styled from "styled-components";
+import { useWindowSize } from "../hooks/useWindowSize";
 import { transparentOrange } from "../styles/colors";
 
 export const NavBar = () => {
+  const { isMobile } = useWindowSize();
+
   return (
     <BarBase>
       <WalletMultiButton />
-      <SolDenTitle>The Sol Den</SolDenTitle>
+      <SolDenTitle>Upgrade Station</SolDenTitle>
+      {!isMobile && <SolDenTitle>The Sol Den</SolDenTitle>}
     </BarBase>
   );
 };
