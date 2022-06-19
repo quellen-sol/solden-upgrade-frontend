@@ -1,0 +1,22 @@
+@font-face {
+  font-family: CaptureIt;
+  src: url('./fonts/Capture-it.ttf')
+}
+
+@font-face {
+  font-family: Lovelo;
+  src: url('./fonts/Lovelo.woff');
+}
+
+@font-face {
+  font-family: Cooper;
+  src: url('./fonts/CooperHewitt-Heavy.woff');
+}
+
+:root {
+  --menuTextColor: #ff914d;
+}
+
+body {
+  background-color: black;
+}
