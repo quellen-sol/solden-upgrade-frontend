@@ -13,10 +13,26 @@
   src: url('./fonts/CooperHewitt-Heavy.woff');
 }
 
+* {
+  font-weight: 600;
+}
+
 :root {
-  --menuTextColor: #ff914d;
+  --menuTextColor: #ff8800;
 }
 
 body {
   background-color: black;
+}
+
+
+
+
+/* Antd overrides */
+.ant-notification-notice-message, .ant-notification-notice-description {
+  color: white !important;
+}
+
+.ant-notification svg {
+  fill: var(--menuTextColor);
 }
