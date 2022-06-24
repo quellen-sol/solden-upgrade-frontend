@@ -15,9 +15,13 @@ export const NavBar = () => {
   );
 };
 
-export const SolDenTitle = styled.span`
+type TitleProps = {
+  fontSizeOverride?: number;
+};
+
+export const SolDenTitle = styled.span<TitleProps>`
   color: white !important;
-  font-size: 36px;
+  font-size: ${({ fontSizeOverride: fontSize }) => fontSize ?? "36"}px;
   font-family: CaptureIt;
   white-space: nowrap;
   font-weight: 300;
@@ -34,4 +38,5 @@ const BarBase = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: 1;
 `;

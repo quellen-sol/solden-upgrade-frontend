@@ -1,11 +1,12 @@
 {
   "extends": ["next/core-web-vitals"],
   "rules": {
-    "no-unused-vars": 2,
+    "no-unused-vars": ["error", { "args": "none" }],
     "eqeqeq": 2,
     "func-style": ["error", "expression"],
     "no-eq-null": 2,
     "prefer-const": "error",
-    "require-await": "error"
+    "require-await": "error",
+    "@next/next/no-img-element": 0
   }
 }
