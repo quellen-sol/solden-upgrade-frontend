@@ -11,8 +11,10 @@ const {
 export const loadNFTs = async (
   pubkey: PublicKey,
   connection: Connection,
-  predicate: (value: NFT) => boolean,
-  reducerToApply: Dispatch<NFTReducerAction>,
+  packPredicate: (value: NFT) => boolean,
+  fighterPredicate: (value: NFT) => boolean,
+  packReducer: Dispatch<NFTReducerAction>,
+  fighterReducer: Dispatch<NFTReducerAction>,
 ) => {
   const loadMeta = async (mint: PublicKey): Promise<NFT | null> => {
     try {
@@ -33,9 +35,13 @@ export const loadNFTs = async (
     const mint = acc.account.data.parsed.info.mint;
     loadMeta(mint)
       .then((meta) => {
-        if (meta && predicate(meta)) {
+        if (meta) {
           meta.mint = mint;
-          reducerToApply({ type: "add", payload: meta });
+          if (packPredicate(meta)) {
+            packReducer({ type: "add", payload: meta });
+          } else if (fighterPredicate(meta)) {
+            fighterReducer({ type: "add", payload: meta });
+          }
         }
       })
       .catch(console.log);

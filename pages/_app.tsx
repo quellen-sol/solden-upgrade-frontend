@@ -1,6 +1,5 @@
 import "antd/dist/antd.css";
 import "../styles/global.css";
-// import "@solana/wallet-adapter-react-ui/styles.css";
 import "../styles/sol-overrides.css";
 import type { AppProps } from "next/app";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";

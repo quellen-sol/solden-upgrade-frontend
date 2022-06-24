@@ -42,8 +42,7 @@ const Home: NextPage = () => {
       editFighterData({ type: "clear" });
     } else {
       setHelpText("Select a fighter & upgrade pack");
-      loadNFTs(wallet.publicKey, connection, packPredicate, editPackData);
-      loadNFTs(wallet.publicKey, connection, fighterPredicate, editFighterData);
+      loadNFTs(wallet.publicKey, connection, packPredicate, fighterPredicate, editPackData, editFighterData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet.publicKey]);
