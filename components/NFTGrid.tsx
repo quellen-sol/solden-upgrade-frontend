@@ -63,12 +63,12 @@ const NFTCard: FC<NFTCardProps> = ({ nft, selector, selectedMint }) => {
   );
 };
 
-const brightessFiler = "filter: brightness(50%);";
+const brightessFilter = "filter: brightness(50%);";
 
 const NFTImage = styled.img<{ selected?: boolean }>`
   width: 100%;
   border: 2px white solid;
-  ${({ selected }) => (selected ? brightessFiler : "")}
+  ${({ selected }) => (selected ? brightessFilter : "")}
   border-radius: 5px;
   &:hover {
     cursor: pointer;
@@ -78,7 +78,7 @@ const NFTImage = styled.img<{ selected?: boolean }>`
 const NFTTitle = styled.div<{ selected?: boolean }>`
   font-size: 24px;
   color: white;
-  ${({ selected }) => (selected ? brightessFiler : "")}
+  ${({ selected }) => (selected ? brightessFilter : "")}
 `;
 
 const CardContainer = styled.div`
