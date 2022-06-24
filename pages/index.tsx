@@ -62,16 +62,18 @@ const Home: NextPage = () => {
             <SolDenTitle style={{ marginTop: 50 }} fontSizeOverride={48}>
               {helpText}
             </SolDenTitle>
-            <div style={{ maxWidth: "100%" }}>
-              <Row>
-                <Col span={12}>
-                  <NFTGrid contextToUse={SelectedFighterContext} nftList={fighterData} />
-                </Col>
-                <Col span={12}>
-                  <NFTGrid contextToUse={SelectedPackContext} nftList={packData} />
-                </Col>
-              </Row>
-            </div>
+            {wallet.publicKey && (
+              <div style={{ maxWidth: "100%" }}>
+                <Row>
+                  <Col span={12}>
+                    <NFTGrid contextToUse={SelectedFighterContext} nftList={fighterData} />
+                  </Col>
+                  <Col span={12}>
+                    <NFTGrid contextToUse={SelectedPackContext} nftList={packData} />
+                  </Col>
+                </Row>
+              </div>
+            )}
           </GameScreen>
         </SelectedFighterContext.Provider>
       </SelectedPackContext.Provider>
