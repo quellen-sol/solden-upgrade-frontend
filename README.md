@@ -1,4 +1,4 @@
-## Getting Started
+# Getting Started
 Install dependencies
 ```bash
 yarn
