@@ -16,7 +16,7 @@ export const loadNFTs = async (
   packReducer: Dispatch<NFTReducerAction>,
   fighterReducer: Dispatch<NFTReducerAction>,
 ) => {
-  const loadMeta = async (mint: PublicKey): Promise<NFT | null> => {
+  const loadMeta = async (mint: string): Promise<NFT | null> => {
     try {
       const meta = await Metadata.load(connection, await Metadata.getPDA(mint));
       const uri = meta.data.data.uri;
@@ -32,7 +32,7 @@ export const loadNFTs = async (
     await connection.getParsedTokenAccountsByOwner(pubkey, { programId: TOKEN_PROGRAM_ID })
   ).value.filter((v) => v.account.data.parsed.info.tokenAmount.uiAmount === 1);
   for (const acc of tokenAccounts) {
-    const mint = acc.account.data.parsed.info.mint;
+    const mint: string = acc.account.data.parsed.info.mint;
     loadMeta(mint)
       .then((meta) => {
         if (meta) {
