@@ -1,19 +1,19 @@
+import { Nft } from "@metaplex-foundation/js";
 import { Context, Dispatch, FC, SetStateAction, useContext } from "react";
 import styled from "styled-components";
 import { NFTSelectionContextType } from "../pages";
 import { mobile } from "../styles/breakpoints";
 import { transparentOrange } from "../styles/colors";
-import { NFT } from "../types/types";
 import { SolDenTitle } from "./NavBar";
 
 type NFTGridProps = {
-  nftList: NFT[];
+  nftList: Nft[];
   contextToUse: Context<NFTSelectionContextType>;
 };
 
 type NFTCardProps = {
-  selector?: Dispatch<SetStateAction<NFT | undefined>>;
-  nft: NFT;
+  selector?: Dispatch<SetStateAction<Nft | undefined>>;
+  nft: Nft;
   selectedMint?: string;
 };
 
@@ -25,7 +25,14 @@ export const NFTGrid: FC<NFTGridProps> = ({ nftList, contextToUse }) => {
       <GridBox>
         {nftList.length > 0 ? (
           nftList.map((v) => {
-            return <NFTCard selectedMint={selected?.mint} selector={setSelected} key={v.mint} nft={v} />;
+            return (
+              <NFTCard
+                selectedMint={selected?.mint.toBase58()}
+                selector={setSelected}
+                key={v.mint.toBase58()}
+                nft={v}
+              />
+            );
           })
         ) : (
           <SolDenTitle style={{ width: "100%", textAlign: "center" }}>Nothing Found!</SolDenTitle>
@@ -38,7 +45,7 @@ export const NFTGrid: FC<NFTGridProps> = ({ nftList, contextToUse }) => {
 const NFTCard: FC<NFTCardProps> = ({ nft, selector, selectedMint }) => {
   const onClick = () => {
     if (selector) {
-      if (selectedMint === nft.mint) {
+      if (selectedMint === nft.mint.toBase58()) {
         selector(undefined);
         return;
       }
@@ -48,17 +55,22 @@ const NFTCard: FC<NFTCardProps> = ({ nft, selector, selectedMint }) => {
 
   const formatName = () => {
     if (nft.symbol === "TSDUP") {
-      return nft.name.replace(" - The Sol Den", "");
-    } else if (nft.symbol === "TSDMW") {
-      return nft.name.replace("The Sol Den - ", "");
+      return nft.name?.replace(" - The Sol Den", "");
+    } else if (nft.symbol === "SOLDENMW") {
+      return nft.name?.replace("The Sol Den", "Fighter");
     }
     return nft.name;
   };
 
   return (
     <CardContainer>
-      <NFTImage selected={selectedMint === nft.mint} onClick={onClick} src={nft.image} alt="" />
-      <NFTTitle selected={selectedMint === nft.mint}>{formatName()}</NFTTitle>
+      <NFTImage
+        selected={selectedMint === nft.mint.toBase58()}
+        onClick={onClick}
+        src={nft.metadata.image}
+        alt="Not Found!"
+      />
+      <NFTTitle selected={selectedMint === nft.mint.toBase58()}>{formatName()}</NFTTitle>
     </CardContainer>
   );
 };

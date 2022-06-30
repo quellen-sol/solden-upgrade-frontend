@@ -1,5 +1,5 @@
 import { notification } from "antd";
-import { CSSProperties } from "react";
+import { CSSProperties, ReactNode } from "react";
 import { orange } from "../styles/colors";
 
 const style: CSSProperties = {
@@ -11,14 +11,14 @@ const style: CSSProperties = {
 
 const duration = 3;
 
-export const infoNotify = (message: string, description: string) => {
+export const infoNotify = (message: string, description: ReactNode) => {
   notification.info({ message, description, style, duration, placement: "bottomLeft" });
 };
 
-export const errorNotify = (message: string, description: string) => {
+export const errorNotify = (message: string, description: ReactNode) => {
   notification.error({ message, description, style, duration, placement: "bottomLeft" });
 };
 
-export const successNotify = (message: string, description: string) => {
+export const successNotify = (message: string, description: ReactNode) => {
   notification.success({ message, description, style, duration, placement: "bottomLeft" });
 };

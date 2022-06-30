@@ -7,8 +7,8 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adap
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  // const RPC_URL = "https://mainnet-beta.solflare.network/";
-  const RPC_URL = "https://bitter-weathered-water.solana-devnet.quiknode.pro/7c4466bf1e5df5ac6d352142f90f6272e4089152/";
+  const RPC_URL = "https://mainnet-beta.solflare.network/";
+  // const RPC_URL = "https://bitter-weathered-water.solana-devnet.quiknode.pro/7c4466bf1e5df5ac6d352142f90f6272e4089152/";
   const wallets = [new PhantomWalletAdapter(), new SolflareWalletAdapter()];
 
   return (

@@ -1,49 +1,28 @@
 import { Connection, PublicKey } from "@solana/web3.js";
-import { programs } from "@metaplex/js";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { NFT } from "../types/types";
+import { Metaplex, Nft } from "@metaplex-foundation/js";
 import { Dispatch } from "react";
 import { NFTReducerAction } from "./nftReducer";
-const {
-  metadata: { Metadata },
-} = programs;
 
 export const loadNFTs = async (
   pubkey: PublicKey,
   connection: Connection,
-  packPredicate: (value: NFT) => boolean,
-  fighterPredicate: (value: NFT) => boolean,
+  packPredicate: (value: Nft) => boolean,
+  fighterPredicate: (value: Nft) => boolean,
   packReducer: Dispatch<NFTReducerAction>,
   fighterReducer: Dispatch<NFTReducerAction>,
 ) => {
-  const loadMeta = async (mint: string): Promise<NFT | null> => {
-    try {
-      const meta = await Metadata.load(connection, await Metadata.getPDA(mint));
-      const uri = meta.data.data.uri;
-      const abortController = new AbortController();
-      setTimeout(() => abortController.abort(), 5000);
-      return await (await fetch(uri, { method: "GET", signal: abortController.signal })).json();
-    } catch {
-      return null;
-    }
-  };
+  const metaplex = new Metaplex(connection);
+  const nfts = await metaplex.nfts().findAllByOwner(pubkey);
 
-  const tokenAccounts = await (
-    await connection.getParsedTokenAccountsByOwner(pubkey, { programId: TOKEN_PROGRAM_ID })
-  ).value.filter((v) => v.account.data.parsed.info.tokenAmount.uiAmount === 1);
-  for (const acc of tokenAccounts) {
-    const mint: string = acc.account.data.parsed.info.mint;
-    loadMeta(mint)
-      .then((meta) => {
-        if (meta) {
-          meta.mint = mint;
-          if (packPredicate(meta)) {
-            packReducer({ type: "add", payload: meta });
-          } else if (fighterPredicate(meta)) {
-            fighterReducer({ type: "add", payload: meta });
-          }
-        }
-      })
-      .catch(console.log);
+  for (const nft of nfts) {
+    if (packPredicate(nft)) {
+      nft.metadataTask.run();
+      nft.metadataTask.onSuccess(() => packReducer({ type: "add", payload: nft }));
+      continue;
+    }
+    if (fighterPredicate(nft)) {
+      nft.metadataTask.run();
+      nft.metadataTask.onSuccess(() => fighterReducer({ type: "add", payload: nft }));
+    }
   }
 };
