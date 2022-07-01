@@ -40,6 +40,7 @@ const Home: NextPage = () => {
   const [showContinueButton, setShowButton] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [refreshLoad, setRefresh] = useState(false);
 
   const submitButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -51,17 +52,23 @@ const Home: NextPage = () => {
     return fighterBelongsToSolDen(nft, "SOLDENMW");
   };
 
+  const clearNFTState = () => {
+    editPackData({ type: "clear" });
+    editFighterData({ type: "clear" });
+    setSelectedFighter(undefined);
+    setSelectedPack(undefined);
+  };
+
   useEffect(() => {
     if (!wallet.publicKey) {
       setHelpText("Connect your wallet");
-      editPackData({ type: "clear" });
-      editFighterData({ type: "clear" });
+      clearNFTState();
     } else {
       setHelpText("Select a fighter & upgrade pack");
       loadNFTs(wallet.publicKey, connection, packPredicate, fighterPredicate, editPackData, editFighterData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallet.publicKey]);
+  }, [wallet.publicKey, refreshLoad]);
 
   useEffect(() => {
     if (selectedFighter && selectedPack) {
@@ -85,14 +92,16 @@ const Home: NextPage = () => {
           txn.add(createCloseAccountInstruction(packATA, wallet.publicKey, wallet.publicKey));
           const signature = await wallet.sendTransaction(txn, connection);
           const txnLink = `https://solscan.io/tx/${signature}`;
-          connection.confirmTransaction(signature, "confirmed").then(() =>
+          connection.confirmTransaction(signature, "confirmed").then(() => {
             successNotify(
               "Confirmed Transaction!",
               <a href={txnLink} target="_blank" rel="noreferrer">
                 View on SolScan
               </a>,
-            ),
-          );
+            );
+            clearNFTState();
+            setRefresh(!refreshLoad);
+          });
           infoNotify(
             "Processing Transaction...",
             <a href={txnLink} target="_blank" rel="noreferrer">
