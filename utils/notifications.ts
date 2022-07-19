@@ -9,7 +9,7 @@ const style: CSSProperties = {
   fontWeight: 600,
 };
 
-const duration = 3;
+const duration = 10;
 
 export const infoNotify = (message: string, description: ReactNode) => {
   notification.info({ message, description, style, duration, placement: "bottomLeft" });

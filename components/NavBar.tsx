@@ -1,6 +1,7 @@
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import styled from "styled-components";
 import { useWindowSize } from "../hooks/useWindowSize";
+import { mobile } from "../styles/breakpoints";
 import { transparentOrange } from "../styles/colors";
 
 export const NavBar = () => {
@@ -25,6 +26,9 @@ export const SolDenTitle = styled.span<TitleProps>`
   font-family: CaptureIt;
   white-space: nowrap;
   font-weight: 300;
+  ${mobile} {
+    font-size: 24px;
+  }
 `;
 
 const BarBase = styled.div`

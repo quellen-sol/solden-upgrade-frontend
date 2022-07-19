@@ -26,11 +26,13 @@ body {
 }
 
 
-
-
 /* Antd overrides */
 .ant-notification-notice-message, .ant-notification-notice-description {
   color: white !important;
+}
+
+.ant-notification-notice {
+  border-radius: 5px;
 }
 
 .ant-notification svg {

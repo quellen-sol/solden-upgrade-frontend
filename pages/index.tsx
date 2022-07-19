@@ -20,7 +20,7 @@ import { API_URL } from "../utils/constants";
 import { loadNFTs } from "../utils/loadNFTs";
 import { fighterBelongsToSolDen, packBelongsToSolDen } from "../utils/nftBelongsToSolDen";
 import { nftReducer } from "../utils/nftReducer";
-import { errorNotify, infoNotify, successNotify } from "../utils/notifications";
+import { errorNotify, successNotify } from "../utils/notifications";
 
 export type NFTSelectionContextType = [Nft | undefined, Dispatch<SetStateAction<Nft | undefined>>];
 
@@ -37,6 +37,7 @@ const Home: NextPage = () => {
   const [packData, editPackData] = useReducer(nftReducer, []);
   const [fighterData, editFighterData] = useReducer(nftReducer, []);
   const [helpText, setHelpText] = useState("Connect Your Wallet!");
+  const [modalText, setModalText] = useState("Processing transaction...");
   const [showContinueButton, setShowButton] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -44,13 +45,9 @@ const Home: NextPage = () => {
 
   const submitButtonRef = useRef<HTMLButtonElement>(null);
 
-  const packPredicate = (nft: Nft) => {
-    return packBelongsToSolDen(nft, "TSDUP");
-  };
+  const packPredicate = (nft: Nft) => packBelongsToSolDen(nft, "TSDUP");
 
-  const fighterPredicate = (nft: Nft) => {
-    return fighterBelongsToSolDen(nft, "SOLDENMW");
-  };
+  const fighterPredicate = (nft: Nft) => fighterBelongsToSolDen(nft, "SOLDENMW");
 
   const clearNFTState = () => {
     editPackData({ type: "clear" });
@@ -90,24 +87,27 @@ const Home: NextPage = () => {
           const txn = new Transaction();
           txn.add(createBurnCheckedInstruction(packATA, packMint, wallet.publicKey, 1, 0));
           txn.add(createCloseAccountInstruction(packATA, wallet.publicKey, wallet.publicKey));
+
           const signature = await wallet.sendTransaction(txn, connection);
+          setModalText("Confirming transaction...");
           const txnLink = `https://solscan.io/tx/${signature}`;
-          connection.confirmTransaction(signature, "confirmed").then(() => {
-            successNotify(
-              "Confirmed Transaction!",
-              <a href={txnLink} target="_blank" rel="noreferrer">
-                View on SolScan
-              </a>,
-            );
-            clearNFTState();
-            setRefresh(!refreshLoad);
-          });
-          infoNotify(
-            "Processing Transaction...",
+          const { value: confirmation } = await connection.confirmTransaction(signature, "confirmed");
+
+          if (confirmation.err) {
+            throw confirmation.err;
+          }
+
+          successNotify(
+            "Confirmed Transaction!",
             <a href={txnLink} target="_blank" rel="noreferrer">
               View on SolScan
             </a>,
           );
+
+          clearNFTState();
+          setRefresh(!refreshLoad);
+          setModalText("Upgrading your fighter...");
+
           const reqPayload = {
             signature,
             packMint: packMint.toBase58(),
@@ -119,14 +119,28 @@ const Home: NextPage = () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(reqPayload),
           });
+
           if (resp.ok) {
+            const tokenLink = `https://solscan.io/token/${fighterMint.toBase58()}`;
+            successNotify(
+              "Upgrade Sucessful!",
+              <>
+                {/*eslint-disable-next-line react/no-unescaped-entities*/}
+                Your fighter's on-chain metadata has been updated! <a href={tokenLink}>View On SolScan</a>
+              </>,
+            );
+          } else {
+            throw new Error(`Server error! The Sol Den team has been notified of this error.`);
           }
         } catch (e: any) {
-          errorNotify("Error", e.message);
+          errorNotify("Upgrade Error", e.message);
+        } finally {
+          setModalVisible(false);
+          if (submitButtonRef.current) {
+            submitButtonRef.current.disabled = false;
+          }
         }
       }
-      setModalVisible(false);
-      submitButtonRef.current.disabled = false;
     }
   };
 
@@ -140,7 +154,7 @@ const Home: NextPage = () => {
       </Head>
       <SelectedPackContext.Provider value={[selectedPack, setSelectedPack]}>
         <SelectedFighterContext.Provider value={[selectedFighter, setSelectedFighter]}>
-          <ProcessingModal visible={modalVisible} />
+          <ProcessingModal text={modalText} visible={modalVisible} />
           <NavBar />
           <GameScreen>
             <SolDenTitle style={{ marginTop: 50 }} fontSizeOverride={48}>

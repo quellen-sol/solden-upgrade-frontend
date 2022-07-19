@@ -5,12 +5,13 @@ import { orange } from "../styles/colors";
 
 type ProcessingModalProps = {
   visible: boolean;
+  text?: string;
 };
 
-export const ProcessingModal: FC<ProcessingModalProps> = ({ visible }) => {
+export const ProcessingModal: FC<ProcessingModalProps> = ({ visible, text }) => {
   return visible ? (
     <Overlay>
-      <Spin tip="Processing Transaction" style={{ color: orange }} size="large" />
+      <Spin tip={text ?? "Processing Transaction"} style={{ color: orange }} size="large" />
     </Overlay>
   ) : null;
 };
